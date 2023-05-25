@@ -1,14 +1,28 @@
 const express = require('express');
-const app = express();
-const port = 3010;
-const path = require('path');
+const bodyParser = require("body-parser");
+const sequelize = require("./app/model/dbconfig");
+const Book = require("./app/model/book");
 
-app.use(express.static('static'));
-
-app.get('/', (req, res) => {
-  res.sendFile(path.resolve('pages/index.html'));
+// auto create table on startup
+sequelize.sync({ force: true }).then(async () => {
+  console.log("db is ready");
 });
 
-app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}`);
+const app = express();
+app.use(express.json());
+
+// Configuring body parser middleware
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.set("view engine", "pug");
+
+app.get("/", async (req, res) => {
+  const books = await Book.findAndCountAll();
+  return res.render("index", { books: books.rows });
+});
+
+const PORT = 3010;
+app.listen(PORT, () => {
+  console.log(`Service endpoint = http://localhost:${PORT}`);
 });
