@@ -17,16 +17,16 @@ html(lang='en')
       input(type="text" placeholder="Book Author" name="author" class="form-control mb-3")
       button(type="submit" class="btn btn-primary") Submit
     table
-      thead 
+      thead
         tr
           th Book Title
           th Book Author
       tbody(id="new-book" hx-target="closest tr" hx-swap="outerHTML swap:0.5s")
         each book in books
-          tr 
+          tr
             td #{book.name}
             td #{book.author}
-            td 
+            td
               button(class="btn btn-primary" hx-get=`/get-edit-form/${book.id}`) Edit Book
-            td 
+            td
               button(hx-delete=`/delete/${book.id}` class="btn btn-primary") Delete
